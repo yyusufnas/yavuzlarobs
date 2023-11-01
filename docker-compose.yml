@@ -1,0 +1,36 @@
+version: '3'
+services:
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=yavuzlar
+      - MYSQL_USER=user 
+      - MYSQL_PASSWORD=user
+      - MYSQL_ALLOW_EMPTY_PASSWORD=0
+    volumes:
+      - "./db:/docker-entrypoint-initdb.d"
+    networks:
+      - mynet
+  www:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./projem/:/var/www/html"
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - mynet
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 9001:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    networks:
+      - mynet
+networks:
+  mynet:
+    driver: bridge
